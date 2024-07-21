@@ -1,0 +1,333 @@
+<!-- start: purchase order -->
+<div>
+    <!-- start: form heading -->
+    <div class="purchase-form-head d-flex justify-content-start align-items-baseline">
+        <a class="back-btn my-auto" (click)="goBack()">
+            <img src="../../../assets/icons/back-arrow-svgrepo-com.svg" alt="" height="20px" width="20px">
+        </a>
+        <p class="form-heading my-auto"><strong>Purchase Order Form</strong></p>
+    </div>
+    <!-- end: form heading -->
+
+    <!-- start: purchase order form -->
+    <form [formGroup]="purchaseOrderForm" class="mb-3">
+
+        <!-- start: purchase client order form -->
+        <div class="container mx-auto purchase-order-form-client-body">
+            <div class="row">
+
+                <!-- start: client name -->
+                <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                    <label for="clientNameInput" class="form-label">Client Name<span style="color: red;">*</span>
+                    </label>
+                    <select id="clientNameInput" class="form-select" aria-label="clientName"
+                        formControlName="clientName">
+                        <option [value]="clientName?.name" *ngFor="let clientName of clientNameList">
+                            {{clientName?.name}}
+                        </option>
+                    </select>
+                </div>
+                <!-- end: client name -->
+
+                <!-- start: purchase order type -->
+                <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                    <label for="purchaseOrderTypeInput" class="form-label">Purchase Order Type<span
+                            style="color: red;">*</span></label>
+                    <select id="purchaseOrderTypeInput" class="form-select" aria-label="purchaseOrderType"
+                        formControlName="purchaseOrderType" (change)="checkOrderType($event)">
+                        <option [value]="orderType?.type" *ngFor="let orderType of purchaseOrderTypeList">
+                            {{orderType?.type}}
+                        </option>
+                    </select>
+                </div>
+                <!-- end: purchase order type -->
+
+                <!-- start: purchase order number -->
+                <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                    <label for="purchaseOrderNumberInput" class="form-label">Purchase Order No.<span
+                            style="color: red;">*</span></label>
+                    <input class="form-control" id="purchaseOrderNumberInput" placeholder="PO Number"
+                        formControlName="purchaseOrderNumber" (change)="setInputTypeForFormField($event, 'po')">
+                </div>
+                <!-- end: purchase order number -->
+
+                <!-- start: received on date -->
+                <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                    <label for="receivedOnInput" class="form-label">Received On<span
+                            style="color: red;">*</span></label>
+                    <input type="date" class="form-control" id="receivedOnInput" placeholder="Received On"
+                        formControlName="receivedOn">
+                </div>
+                <!-- end: received on date -->
+
+            </div>
+            <div class="row">
+
+                <!-- start: received from name -->
+                <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                    <label for="receivedFromNameInput" class="form-label">Received From<span
+                            style="color: red;">*</span></label>
+                    <input class="form-control" id="receivedFromNameInput" placeholder="Received From Name"
+                        formControlName="receivedFromName">
+                </div>
+                <!-- end: recevied from name -->
+
+                <!-- start: received from email -->
+                <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                    <label for="receivedFromEmailInput" class="form-label">Received From Email<span
+                            style="color: red;">*</span></label>
+                    <input type="email" class="form-control" id="receivedFromEmailInput"
+                        placeholder="Received From Email" formControlName="receivedFromEmail">
+                </div>
+                <!-- end: received from email -->
+
+                <!-- start: po start date -->
+                <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                    <label for="purchaseOrderStartDateInput" class="form-label">PO Start Date<span
+                            style="color: red;">*</span></label>
+                    <input type="date" class="form-control" id="purchaseOrderStartDateInput" placeholder="Start Date"
+                        formControlName="purchaseOrderStartDate">
+                </div>
+                <!-- end: po start date -->
+
+                <!-- start: po end date -->
+                <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                    <label for="purchaseOrderEndDateInput" class="form-label">PO End Date<span
+                            style="color: red;">*</span></label>
+                    <input type="date" class="form-control" id="purchaseOrderEndDateInput" placeholder="End Date"
+                        formControlName="purchaseOrderEndDate" [readonly]="purchaseOrderStartDate.value ? false : true"
+                        min="{{purchaseOrderStartDate.value ? purchaseOrderStartDate.value : null}}">
+                </div>
+                <!-- end: po end date -->
+
+                <!-- start: budget -->
+                <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                    <label for="budgetInput" class="form-label">Budget<span style="color: red;">*</span></label>
+                    <input maxlength="5" class="form-control" id="budgetInput" placeholder="Budget"
+                        formControlName="budget" (keyup)="setInputTypeForFormField($event, 'budget')">
+                </div>
+                <!-- end: budget -->
+
+                <!-- start: currency -->
+                <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                    <label for="currencyInput" class="form-label">Currency<span style="color: red;">*</span></label>
+                    <select id="currencyInput" class="form-select" aria-label="currency" formControlName="currency">
+                        <option [value]="currencyType?.type" *ngFor="let currencyType of currencyTypeList">
+                            {{currencyType?.type}}
+                        </option>
+                    </select>
+                </div>
+                <!-- end: currency -->
+            </div>
+            <hr>
+        </div>
+        <!-- end: purchase client order form -->
+
+        <!-- start: talent details -->
+        <ng-container *ngIf="clientName?.value">
+
+            <!-- start: talent details heading and adding another talent detail option -->
+            <div class="purchase-form-head d-flex justify-content-between align-items-baseline">
+                <p class="form-heading my-auto ms-3"><strong>Talent Details</strong></p>
+                <button class="back-btn my-auto btn btn-outline-dark" (click)="addAnotherTalentDetails()"
+                    *ngIf="purchaseOrderType?.value === 'Group PO'">+ Add Another</button>
+            </div>
+            <!-- end: talent details heading and adding another talent detail option -->
+
+            <!-- start: talent details form array -->
+            <div class="container mx-auto purchase-order-form-client-body">
+                <ng-container formArrayName="talentDetails">
+                    <ng-container *ngFor="let detail of talentDetails?.controls; let i = index;">
+                        <div class="row" [formGroupName]="i">
+
+                            <!-- start: job title -->
+                            <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                                <label for="jobTitleInput" class="form-label">Job Title/REQ Name<span
+                                        style="color: red;">*</span></label>
+                                <select id="jobTitleInput" class="form-select" aria-label="jobTitle"
+                                    formControlName="jobTitle" (change)="setJobIdAndTalentDescription(detail, i)">
+                                    <option [value]="title?.name" *ngFor="let title of jobTitleList">
+                                        {{title?.name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <!-- end: job title -->
+
+                            <!-- start: job id -->
+                            <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                                <label for="jobIdInput" class="form-label">Job ID/REQ ID<span
+                                        style="color: red;">*</span></label>
+                                <input class="form-control" id="jobIdInput" placeholder="JOB ID" formControlName="jobId"
+                                    readonly>
+                            </div>
+                            <!-- end: job id -->
+
+                            <!-- start: delete icon -->
+                            <div class="col col-12 col-sm-6 col-lg-6 mb-3 text-end">
+                                <a *ngIf="talentDetails?.controls?.length > 1 && !purchaseOrderForm.disabled"
+                                    (click)="removeTalentDetail(i)">
+                                    <svg height="20px" width="20px" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                        <path
+                                            d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z" />
+                                    </svg>
+                                </a>
+                            </div>
+                            <!-- end: delete icon -->
+                            <hr>
+
+                            <!-- start: talent description form array -->
+                            <ng-container *ngIf="checkIfJobIsSelected()">
+                                <ng-container formArrayName="talentDescription">
+                                    <ng-container *ngFor="let talent of getTalentList(detail, i); let j = index;">
+                                        <div [formGroupName]="j">
+                                            <ng-container
+                                                *ngFor="let candidate of getTalentListObject(detail, j); let y = index;">
+                                                <div class="row">
+
+                                                    <!-- start: candidate name and its checkbox -->
+                                                    <div class="form-check mb-3 ms-3">
+                                                        <input class="form-check-input" type="checkbox" value=""
+                                                            id="flexCheckDefault"
+                                                            (change)="addFormControlToTalentDescriptionFormArray($event, candidate, talent)"
+                                                            [checked]="candidate?.isChecked"
+                                                            formControlName="isChecked">
+                                                        <label class="form-check-label" for="flexCheckDefault">
+                                                            {{candidate?.name}}
+                                                        </label>
+                                                    </div>
+                                                    <!-- end: candidate name its checkbox -->
+
+                                                </div>
+                                                <div class="row">
+
+                                                    <!-- start: contract duration -->
+                                                    <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                                                        <label for="contractDurationInput" class="form-label">Contract
+                                                            Duration<span style="color: red;"
+                                                                *ngIf="candidate?.isChecked">*</span></label>
+                                                        <input class="form-control" id="contractDurationInput"
+                                                            placeholder="Contract Duration in Months"
+                                                            formControlName="contractDuration"
+                                                            [readOnly]="!candidate?.isChecked">
+                                                    </div>
+                                                    <!-- end: contract duration -->
+
+                                                    <!-- start: bill rate -->
+                                                    <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                                                        <label for="billRateInput" class="form-label">Bill Rate<span
+                                                                style="color: red;"
+                                                                *ngIf="candidate?.isChecked">*</span></label>
+                                                        <input type="number" class="form-control" id="billRateInput"
+                                                            placeholder="Bill Rate /hr" formControlName="billRate"
+                                                            [readOnly]="!candidate?.isChecked">
+                                                    </div>
+                                                    <!-- end: bill rate -->
+
+                                                    <!-- start: billrate currency -->
+                                                    <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                                                        <label for="billRateCurrencyInput"
+                                                            class="form-label">Currency<span style="color: red;"
+                                                                *ngIf="candidate?.isChecked">*</span></label>
+                                                        <select id="billRateCurrencyInput" class="form-select"
+                                                            aria-label="currency" formControlName="billRateCurrency">
+                                                            <option [value]="currencyType?.type"
+                                                                *ngFor="let currencyType of currencyTypeList">
+                                                                {{currencyType?.type}}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <!-- end: billrate currency -->
+
+                                                    <!-- start: standard bill rate -->
+                                                    <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                                                        <label for="standardTimeBillRateInput"
+                                                            class="form-label">Standard
+                                                            Time BR<span style="color: red;"
+                                                                *ngIf="candidate?.isChecked">*</span></label>
+                                                        <input type="number" class="form-control"
+                                                            id="standardTimeBillRateInput"
+                                                            placeholder="Standard Bill Rate /hr"
+                                                            formControlName="standardTimeBillRate"
+                                                            [readOnly]="!candidate?.isChecked">
+                                                    </div>
+                                                    <!-- end: standard bill rate -->
+
+                                                    <!-- start: standard bill rate currency -->
+                                                    <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                                                        <label for="standardTimeCurrencyInput"
+                                                            class="form-label">Currency<span style="color: red;"
+                                                                *ngIf="candidate?.isChecked">*</span></label>
+                                                        <select id="standardTimeCurrencyInput" class="form-select"
+                                                            aria-label="currency"
+                                                            formControlName="standardTimeCurrency">
+                                                            <option [value]="currencyType?.type"
+                                                                *ngFor="let currencyType of currencyTypeList">
+                                                                {{currencyType?.type}}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <!-- end: standard bill rate currency -->
+
+                                                    <!-- start: over time billrate -->
+                                                    <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                                                        <label for="overTimeBillRateInput" class="form-label">Over Time
+                                                            BR<span style="color: red;"
+                                                                *ngIf="candidate?.isChecked">*</span></label>
+                                                        <input type="number" class="form-control"
+                                                            id="overTimeBillRateInput"
+                                                            placeholder="Over Time Bill Rate /hr"
+                                                            formControlName="overTimeBillRate"
+                                                            [readOnly]="!candidate?.isChecked">
+                                                    </div>
+                                                    <!-- end: over time billrate -->
+
+                                                    <!-- start: over time currency -->
+                                                    <div class="col col-12 col-sm-6 col-lg-3 mb-3">
+                                                        <label for="overTimeCurrencyInput"
+                                                            class="form-label">Currency<span style="color: red;"
+                                                                *ngIf="candidate?.isChecked">*</span></label>
+                                                        <select id="overTimeCurrencyInput" class="form-select"
+                                                            aria-label="currency" formControlName="overTimeCurrency">
+                                                            <option [value]="currencyType?.type"
+                                                                *ngFor="let currencyType of currencyTypeList">
+                                                                {{currencyType?.type}}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <!-- end: over time currency -->
+
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                            </ng-container>
+                            <!-- end: talent description form array -->
+
+                            <hr *ngIf="talentDetails?.controls.length > 1">
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+            <!-- end: talent details form array -->
+
+        </ng-container>
+        <!-- end: talent details -->
+
+    </form>
+    <!-- end: purchase order form -->
+
+    <!-- start: reset/save button -->
+    <div class="d-flex justify-content-end me-3 mb-3 mt-3">
+        <button class="btn btn-outline-danger me-3" (click)="resetForm()">Reset</button>
+        <button class="btn btn-outline-success" (click)="submitForm()">Save</button>
+    </div>
+    <!-- end: reset/save button -->
+
+    <!-- start: toaster -->
+    <ng-container *ngIf="isSubmittedFormInvalid">
+        <app-toaster (toasterClosedEmitter)="getToasterEmittedData($event)"></app-toaster>
+    </ng-container>
+</div>
+<!-- end: purchase order -->
