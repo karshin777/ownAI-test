@@ -191,8 +191,9 @@
                             </div>
                             <!-- end: job id -->
 
-                            <!-- start: delete icon -->
-                            <div class="col col-12 col-sm-6 col-lg-2 mb-3 text-end">
+                            <div class="col col-12 col-sm-6 col-lg-6 mb-3 d-flex justify-content-end">
+
+                                <!-- start: delete icon -->
                                 <a *ngIf="talentDetails?.controls?.length > 1 && !purchaseOrderForm.disabled"
                                     (click)="removeTalentDetail(i)">
                                     <svg height="20px" width="20px" xmlns="http://www.w3.org/2000/svg"
@@ -201,29 +202,31 @@
                                             d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z" />
                                     </svg>
                                 </a>
-                            </div>
-                            <!-- end: delete icon -->
-                            <div class="col col-12 col-sm-6 col-lg-2 mb-3 text-end">
+                                <!-- end: delete icon -->
+
+                                <!-- start: hide button -->
                                 <a *ngIf="!purchaseOrderForm.disabled" (click)="onClickHideBtn(i)" class="hideBtn{{i}}"
                                     style="display: none;">
-                                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path d="M6 12L18 12" stroke="#000000" stroke-width="2" stroke-linecap="round"
                                             stroke-linejoin="round" />
                                     </svg>
                                 </a>
-                            </div>
+                                <!-- end: hide button -->
 
-                            <div class="col col-12 col-sm-6 col-lg-2 mb-3 text-end">
+                                <!-- start: show button -->
                                 <a *ngIf="!purchaseOrderForm.disabled" (click)="onClickShowBtn(i)" class="showBtn{{i}}"
                                     style="display: none;">
-                                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                                    <svg width="25px" height="25px" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <path d="M6 12H18M12 6V18" stroke="#000000" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                 </a>
+                                <!-- end: show button -->
                             </div>
+
                             <hr>
 
                             <!-- start: talent description form array -->
