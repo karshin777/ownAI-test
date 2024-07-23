@@ -3,6 +3,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { StaticEnums } from 'src/app/constants/static-enums';
 import { PurchaseModel } from 'src/app/model/purchase-model';
+import * as $ from 'jquery';
 
 @Component({
   selector: 'app-purchase-order-form',
@@ -48,6 +49,26 @@ export class PurchaseOrderFormComponent implements OnInit {
 
   get purchaseOrderEndDate() {
     return this.purchaseOrderForm.get('purchaseOrderEndDate') as FormControl;
+  }
+
+  get purchaseOrderNumber() {
+    return this.purchaseOrderForm.get('purchaseOrderNumber') as FormControl;
+  }
+
+  get receivedOn() {
+    return this.purchaseOrderForm.get('receivedOn') as FormControl;
+  }
+
+  get receivedFromName() {
+    return this.purchaseOrderForm.get('receivedFromName') as FormControl;
+  }
+
+  get receivedFromEmail() {
+    return this.purchaseOrderForm.get('receivedFromEmail') as FormControl;
+  }
+
+  get budget() {
+    return this.purchaseOrderForm.get('budget') as FormControl;
   }
 
   getTalentList(detail, talentDetailIndex) {
@@ -118,17 +139,29 @@ export class PurchaseOrderFormComponent implements OnInit {
     const numberRegex = new RegExp('^[0-9]*$');
     if (inputFor === 'po') {
       if (event.target.value.match(combinedRegex)) {
-        return event.target.value
+        return event.target.value;
       } else {
         event.target.value = '';
-        return event.target.value
+        return event.target.value;
       }
     } else if (inputFor === 'budget') {
       if (event?.target?.value.match(numberRegex)) {
-        return event.target.value
+        return event.target.value;
       } else {
         event.target.value = '';
-        return event.target.value
+        return event.target.value;
+      }
+    } else if (inputFor === 'duration') {
+      if (event?.target?.value.match(numberRegex)) {
+        if (event?.target?.value >= 0 && event?.target?.value <= 12) {
+          return event.target.value;
+        } else {
+          event.target.value = '';
+          return event.target.value;
+        }
+      } else {
+        event.target.value = '';
+        return event.target.value;
       }
     }
   }
@@ -170,7 +203,10 @@ export class PurchaseOrderFormComponent implements OnInit {
 
       // for inserting/pushing talent detail object as per requirement
       len > 1 ? this.talentDetails.insert(index, detail) : this.talentDetails.push(detail);
-      console.log(this.talentDetails.value)
+
+      // for show/hide the expand/enclose button
+      $(".hideBtn" + index).css('display', 'flex');
+      $(".showBtn" + index).css('display', 'none');
     }
   }
 
@@ -255,6 +291,27 @@ export class PurchaseOrderFormComponent implements OnInit {
     }
   }
 
+  // method to check validity of jobTitle form control
+  checkIfJobTitleIsValid(detail) {
+    if (detail.controls.jobTitle) {
+      return detail.controls.jobTitle;
+    }
+  }
+
+  // method to check if candidate required detail are valid or not
+  checkIfCandidateFieldIsValid(talent) {
+    if (talent.controls) {
+      return talent.controls;
+    }
+  }
+
+  // method to set the min date range for purchase order end date
+  setPurchaseOrderEndDateRange(event) {
+    if (event.target.value) {
+      this.purchaseOrderEndDate.reset();
+    }
+  }
+
   // method to mark candidate as checked or not and also to set validators accordingly
   addFormControlToTalentDescriptionFormArray(event, talentObj, talentDescriptionGroup: FormGroup) {
     if (event.target.checked) {
@@ -301,6 +358,27 @@ export class PurchaseOrderFormComponent implements OnInit {
   removeTalentDetail(talentDetailIndex) {
     this.talentDetails.removeAt(talentDetailIndex);
     this.talentDetails.updateValueAndValidity();
+  }
+
+  // method to hide the candidate details using jquery
+  onClickHideBtn(index) {
+    $(".talent-info-" + index).css('display', 'none');
+    $(".hideBtn" + index).css('display', 'none');
+    $(".showBtn" + index).css('display', 'flex');
+  }
+
+  // method to show the candidate details using juery
+  onClickShowBtn(index) {
+    $(".talent-info-" + index).css('display', 'block');
+    $(".hideBtn" + index).css('display', 'flex');
+    $(".showBtn" + index).css('display', 'none');
+  }
+
+  // method to show all the candidate details when user clicks save button
+  expandAllCandidateDetails() {
+    for (let i = 0; i < this.talentDetails.length; i++) {
+      $(".talent-info-" + i).css('display', 'block');
+    }
   }
 
   // method to get if toaster is closed
@@ -356,6 +434,7 @@ export class PurchaseOrderFormComponent implements OnInit {
     });
     this.talentDetails.push(talentDetailObj);
     this.purchaseOrderForm.reset();
+    $('.submit-btn').attr('disabled', 'false');
   }
 
   /** method to submit the form and then after disabling it as per requirement
@@ -366,8 +445,11 @@ export class PurchaseOrderFormComponent implements OnInit {
     const purchaseForm = new PurchaseModel().toLocal(this.purchaseOrderForm.value);
     if (this.checkIfFormIsValid(purchaseForm) && this.purchaseOrderForm.valid) {
       this.purchaseOrderForm.disable();
+      this.expandAllCandidateDetails();
+      $('.submit-btn').attr('disabled', 'true');
       console.log(purchaseForm);
     } else {
+      this.purchaseOrderForm.markAllAsTouched();
       this.isSubmittedFormInvalid = true;
     }
   }

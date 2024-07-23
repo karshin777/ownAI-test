@@ -26,6 +26,8 @@
                             {{clientName?.name}}
                         </option>
                     </select>
+                    <label style="color: red !important;" *ngIf="clientName.invalid && clientName.touched">This field is
+                        required</label>
                 </div>
                 <!-- end: client name -->
 
@@ -39,6 +41,9 @@
                             {{orderType?.type}}
                         </option>
                     </select>
+                    <label style="color: red !important;"
+                        *ngIf="purchaseOrderType.invalid && purchaseOrderType.touched">This field is
+                        required</label>
                 </div>
                 <!-- end: purchase order type -->
 
@@ -48,6 +53,9 @@
                             style="color: red;">*</span></label>
                     <input class="form-control" id="purchaseOrderNumberInput" placeholder="PO Number"
                         formControlName="purchaseOrderNumber" (change)="setInputTypeForFormField($event, 'po')">
+                    <label style="color: red !important;"
+                        *ngIf="purchaseOrderNumber.invalid && purchaseOrderNumber.touched">This field is
+                        required</label>
                 </div>
                 <!-- end: purchase order number -->
 
@@ -57,6 +65,8 @@
                             style="color: red;">*</span></label>
                     <input type="date" class="form-control" id="receivedOnInput" placeholder="Received On"
                         formControlName="receivedOn">
+                    <label style="color: red !important;" *ngIf="receivedOn.invalid && receivedOn.touched">This field is
+                        required</label>
                 </div>
                 <!-- end: received on date -->
 
@@ -69,6 +79,8 @@
                             style="color: red;">*</span></label>
                     <input class="form-control" id="receivedFromNameInput" placeholder="Received From Name"
                         formControlName="receivedFromName">
+                    <label style="color: red !important;"
+                        *ngIf="receivedFromName.invalid && receivedFromName.touched">This field is required</label>
                 </div>
                 <!-- end: recevied from name -->
 
@@ -78,6 +90,9 @@
                             style="color: red;">*</span></label>
                     <input type="email" class="form-control" id="receivedFromEmailInput"
                         placeholder="Received From Email" formControlName="receivedFromEmail">
+                    <label style="color: red !important;"
+                        *ngIf="receivedFromEmail.invalid && receivedFromEmail.touched">This
+                        field is required</label>
                 </div>
                 <!-- end: received from email -->
 
@@ -86,7 +101,10 @@
                     <label for="purchaseOrderStartDateInput" class="form-label">PO Start Date<span
                             style="color: red;">*</span></label>
                     <input type="date" class="form-control" id="purchaseOrderStartDateInput" placeholder="Start Date"
-                        formControlName="purchaseOrderStartDate">
+                        formControlName="purchaseOrderStartDate" (change)="setPurchaseOrderEndDateRange($event)">
+                    <label style="color: red !important;"
+                        *ngIf="purchaseOrderStartDate.invalid && purchaseOrderStartDate.touched">This field is
+                        required</label>
                 </div>
                 <!-- end: po start date -->
 
@@ -95,8 +113,11 @@
                     <label for="purchaseOrderEndDateInput" class="form-label">PO End Date<span
                             style="color: red;">*</span></label>
                     <input type="date" class="form-control" id="purchaseOrderEndDateInput" placeholder="End Date"
-                        formControlName="purchaseOrderEndDate" [readonly]="purchaseOrderStartDate.value ? false : true"
+                        formControlName="purchaseOrderEndDate"
                         min="{{purchaseOrderStartDate.value ? purchaseOrderStartDate.value : null}}">
+                    <label style="color: red !important;"
+                        *ngIf="purchaseOrderEndDate.invalid && purchaseOrderEndDate.touched">This field is
+                        required</label>
                 </div>
                 <!-- end: po end date -->
 
@@ -105,6 +126,8 @@
                     <label for="budgetInput" class="form-label">Budget<span style="color: red;">*</span></label>
                     <input maxlength="5" class="form-control" id="budgetInput" placeholder="Budget"
                         formControlName="budget" (keyup)="setInputTypeForFormField($event, 'budget')">
+                    <label style="color: red !important;" *ngIf="budget.invalid && budget.touched">This field is
+                        required</label>
                 </div>
                 <!-- end: budget -->
 
@@ -116,6 +139,8 @@
                             {{currencyType?.type}}
                         </option>
                     </select>
+                    <label style="color: red !important;" *ngIf="currency.invalid && currency.touched">This field is
+                        required</label>
                 </div>
                 <!-- end: currency -->
             </div>
@@ -150,6 +175,10 @@
                                         {{title?.name}}
                                     </option>
                                 </select>
+                                <label style="color: red !important;"
+                                    *ngIf="checkIfJobTitleIsValid(detail).invalid && checkIfJobTitleIsValid(detail).touched">This
+                                    field is
+                                    required</label>
                             </div>
                             <!-- end: job title -->
 
@@ -163,7 +192,7 @@
                             <!-- end: job id -->
 
                             <!-- start: delete icon -->
-                            <div class="col col-12 col-sm-6 col-lg-6 mb-3 text-end">
+                            <div class="col col-12 col-sm-6 col-lg-2 mb-3 text-end">
                                 <a *ngIf="talentDetails?.controls?.length > 1 && !purchaseOrderForm.disabled"
                                     (click)="removeTalentDetail(i)">
                                     <svg height="20px" width="20px" xmlns="http://www.w3.org/2000/svg"
@@ -174,13 +203,34 @@
                                 </a>
                             </div>
                             <!-- end: delete icon -->
+                            <div class="col col-12 col-sm-6 col-lg-2 mb-3 text-end">
+                                <a *ngIf="!purchaseOrderForm.disabled" (click)="onClickHideBtn(i)" class="hideBtn{{i}}"
+                                    style="display: none;">
+                                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6 12L18 12" stroke="#000000" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            </div>
+
+                            <div class="col col-12 col-sm-6 col-lg-2 mb-3 text-end">
+                                <a *ngIf="!purchaseOrderForm.disabled" (click)="onClickShowBtn(i)" class="showBtn{{i}}"
+                                    style="display: none;">
+                                    <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6 12H18M12 6V18" stroke="#000000" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            </div>
                             <hr>
 
                             <!-- start: talent description form array -->
                             <ng-container *ngIf="checkIfJobIsSelected()">
                                 <ng-container formArrayName="talentDescription">
                                     <ng-container *ngFor="let talent of getTalentList(detail, i); let j = index;">
-                                        <div [formGroupName]="j">
+                                        <div [formGroupName]="j" class="talent-info-{{i}}">
                                             <ng-container
                                                 *ngFor="let candidate of getTalentListObject(detail, j); let y = index;">
                                                 <div class="row">
@@ -209,7 +259,12 @@
                                                         <input class="form-control" id="contractDurationInput"
                                                             placeholder="Contract Duration in Months"
                                                             formControlName="contractDuration"
-                                                            [readOnly]="!candidate?.isChecked">
+                                                            [readOnly]="!candidate?.isChecked" maxlength="2"
+                                                            (keyup)="setInputTypeForFormField($event, 'duration')">
+                                                        <label style="color: red !important;"
+                                                            *ngIf="checkIfCandidateFieldIsValid(talent).contractDuration.invalid && checkIfCandidateFieldIsValid(talent).contractDuration.touched">This
+                                                            field is
+                                                            required</label>
                                                     </div>
                                                     <!-- end: contract duration -->
 
@@ -221,6 +276,10 @@
                                                         <input type="number" class="form-control" id="billRateInput"
                                                             placeholder="Bill Rate /hr" formControlName="billRate"
                                                             [readOnly]="!candidate?.isChecked">
+                                                        <label style="color: red !important;"
+                                                            *ngIf="checkIfCandidateFieldIsValid(talent).billRate.invalid && checkIfCandidateFieldIsValid(talent).billRate.touched">This
+                                                            field is
+                                                            required</label>
                                                     </div>
                                                     <!-- end: bill rate -->
 
@@ -236,6 +295,10 @@
                                                                 {{currencyType?.type}}
                                                             </option>
                                                         </select>
+                                                        <label style="color: red !important;"
+                                                            *ngIf="checkIfCandidateFieldIsValid(talent).billRateCurrency.invalid && checkIfCandidateFieldIsValid(talent).billRateCurrency.touched">This
+                                                            field is
+                                                            required</label>
                                                     </div>
                                                     <!-- end: billrate currency -->
 
@@ -250,6 +313,10 @@
                                                             placeholder="Standard Bill Rate /hr"
                                                             formControlName="standardTimeBillRate"
                                                             [readOnly]="!candidate?.isChecked">
+                                                        <label style="color: red !important;"
+                                                            *ngIf="checkIfCandidateFieldIsValid(talent).standardTimeBillRate.invalid && checkIfCandidateFieldIsValid(talent).standardTimeBillRate.touched">This
+                                                            field is
+                                                            required</label>
                                                     </div>
                                                     <!-- end: standard bill rate -->
 
@@ -266,6 +333,10 @@
                                                                 {{currencyType?.type}}
                                                             </option>
                                                         </select>
+                                                        <label style="color: red !important;"
+                                                            *ngIf="checkIfCandidateFieldIsValid(talent).standardTimeCurrency.invalid && checkIfCandidateFieldIsValid(talent).standardTimeCurrency.touched">This
+                                                            field is
+                                                            required</label>
                                                     </div>
                                                     <!-- end: standard bill rate currency -->
 
@@ -279,6 +350,10 @@
                                                             placeholder="Over Time Bill Rate /hr"
                                                             formControlName="overTimeBillRate"
                                                             [readOnly]="!candidate?.isChecked">
+                                                        <label style="color: red !important;"
+                                                            *ngIf="checkIfCandidateFieldIsValid(talent).overTimeBillRate.invalid && checkIfCandidateFieldIsValid(talent).overTimeBillRate.touched">This
+                                                            field is
+                                                            required</label>
                                                     </div>
                                                     <!-- end: over time billrate -->
 
@@ -294,6 +369,10 @@
                                                                 {{currencyType?.type}}
                                                             </option>
                                                         </select>
+                                                        <label style="color: red !important;"
+                                                            *ngIf="checkIfCandidateFieldIsValid(talent).overTimeCurrency.invalid && checkIfCandidateFieldIsValid(talent).overTimeCurrency.touched">This
+                                                            field is
+                                                            required</label>
                                                     </div>
                                                     <!-- end: over time currency -->
 
@@ -320,8 +399,8 @@
 
     <!-- start: reset/save button -->
     <div class="d-flex justify-content-end me-3 mb-3 mt-3">
-        <button class="btn btn-outline-danger me-3" (click)="resetForm()">Reset</button>
-        <button class="btn btn-outline-success" (click)="submitForm()">Save</button>
+        <button class="btn btn-outline-danger me-3 reset-btn" (click)="resetForm()">Reset</button>
+        <button class="btn btn-outline-success submit-btn" (click)="submitForm()">Save</button>
     </div>
     <!-- end: reset/save button -->
 

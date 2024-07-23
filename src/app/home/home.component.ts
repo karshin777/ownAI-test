@@ -16,7 +16,6 @@ export class HomeComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log('working');
     this.route.navigateByUrl("/purchase-order")
   }
 
